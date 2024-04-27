@@ -4,17 +4,18 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.learning.myappwithfirebase.ui.viewmodels.SplashViewModel
 import com.learning.myappwithfirebase.ui.views.HomeView
 import com.learning.myappwithfirebase.ui.views.LoginView
 import com.learning.myappwithfirebase.ui.views.SplashView
 
 @Composable
-fun MainNavigation() {
+fun MainNavigation(splashViewModel: SplashViewModel) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "SplashView") {
         composable("SplashView") {
-            SplashView(navController)
+            SplashView(navController, splashViewModel)
         }
 
         composable("HomeView") {

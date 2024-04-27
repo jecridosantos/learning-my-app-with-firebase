@@ -56,6 +56,9 @@ dependencies {
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
 
+    // Import the Firebase Auth
+    implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
+
     //dagger Hilt
     implementation("com.google.dagger:hilt-android:2.50")
     kapt("com.google.dagger:hilt-compiler:2.50")
