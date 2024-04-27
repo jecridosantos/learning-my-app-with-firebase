@@ -1,5 +1,6 @@
 package com.learning.myappwithfirebase.data.firebase
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.learning.myappwithfirebase.domain.model.UserLogged
 import com.learning.myappwithfirebase.domain.repository.AuthRepository
@@ -19,6 +20,29 @@ class AuthFirebaseImpl @Inject constructor(private val auth: FirebaseAuth) : Aut
             callback.onError.invoke(null)
         }
 
+    }
+
+    override suspend fun signInWithEmailAndPassword(
+        email: String,
+        password: String,
+        callback: CallbackHandle<Boolean>
+    ) {
+        try {
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+                callback.onSuccess.invoke(it.isSuccessful)
+            }
+        } catch (e: Exception) {
+            callback.onError.invoke(null)
+        }
+    }
+
+    override fun logout(callback: CallbackHandle<Boolean>) {
+        try {
+            auth.signOut()
+            callback.onSuccess(true)
+        } catch (e: Exception) {
+            callback.onError(null)
+        }
     }
 
 }

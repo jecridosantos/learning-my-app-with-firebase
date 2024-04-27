@@ -6,4 +6,7 @@ import com.learning.myappwithfirebase.utils.CallbackHandle
 interface AuthRepository {
     fun getCurrentUser(callback : CallbackHandle<UserLogged>)
 
+    suspend fun signInWithEmailAndPassword(email: String, password: String, callback: CallbackHandle<Boolean>)
+
+    fun logout(callback: CallbackHandle<Boolean>)
 }

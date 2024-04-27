@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.learning.myappwithfirebase.ui.navigation.MainNavigation
 import com.learning.myappwithfirebase.ui.theme.MyAppWithFirebaseTheme
+import com.learning.myappwithfirebase.ui.viewmodels.HomeViewModel
+import com.learning.myappwithfirebase.ui.viewmodels.LoginViewModel
 import com.learning.myappwithfirebase.ui.viewmodels.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,6 +24,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val splashViewModel: SplashViewModel by viewModels()
+        val loginViewModel: LoginViewModel by viewModels()
+        val homeViewModel: HomeViewModel by viewModels()
 
         setContent {
             MyAppWithFirebaseTheme {
@@ -30,7 +34,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainNavigation(splashViewModel)
+                    MainNavigation(splashViewModel, loginViewModel, homeViewModel)
                 }
             }
         }
