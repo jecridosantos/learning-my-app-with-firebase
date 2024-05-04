@@ -1,7 +1,7 @@
 package com.learning.myappwithfirebase.data.firebase
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.learning.myappwithfirebase.domain.model.UserLogged
 import com.learning.myappwithfirebase.domain.repository.AuthRepository
 import com.learning.myappwithfirebase.utils.CallbackHandle
@@ -29,6 +29,17 @@ class AuthFirebaseImpl @Inject constructor(private val auth: FirebaseAuth) : Aut
     ) {
         try {
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+                callback.onSuccess.invoke(it.isSuccessful)
+            }
+        } catch (e: Exception) {
+            callback.onError.invoke(null)
+        }
+    }
+
+    override suspend fun signInWithGoogle(tokenId: String, callback: CallbackHandle<Boolean>) {
+        try {
+            val credential = GoogleAuthProvider.getCredential(tokenId, null)
+            auth.signInWithCredential(credential).addOnCompleteListener {
                 callback.onSuccess.invoke(it.isSuccessful)
             }
         } catch (e: Exception) {

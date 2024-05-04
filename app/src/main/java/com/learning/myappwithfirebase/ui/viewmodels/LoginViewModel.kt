@@ -24,4 +24,13 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
         }
     }
 
+    fun loginWithGoogle(tokenId: String, authResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            authRepository.signInWithGoogle(tokenId, CallbackHandle(
+                onSuccess = { authResult.invoke(it) },
+                onError = {}
+            ))
+        }
+    }
+
 }

@@ -8,5 +8,7 @@ interface AuthRepository {
 
     suspend fun signInWithEmailAndPassword(email: String, password: String, callback: CallbackHandle<Boolean>)
 
+    suspend fun signInWithGoogle(tokenId: String, callback: CallbackHandle<Boolean>)
+
     fun logout(callback: CallbackHandle<Boolean>)
 }

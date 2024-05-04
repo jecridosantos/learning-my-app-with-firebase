@@ -1,6 +1,10 @@
 package com.learning.myappwithfirebase.ui.views
 
+import android.content.Intent
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,12 +24,49 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.learning.myappwithfirebase.ui.viewmodels.LoginViewModel
+import com.learning.myappwithfirebase.utils.Constants
 
 @Composable
 fun LoginView(navController: NavController, loginViewModel: LoginViewModel) {
 
     val context = LocalContext.current
+
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+
+            try {
+                val account = task.getResult(ApiException::class.java)
+                loginViewModel.loginWithGoogle(account.idToken!!) { success ->
+                    if (success) {
+                        navController.navigate("HomeView") {
+                            popUpTo("SplashView") { inclusive = true }
+                        }
+                    } else {
+                        Toast.makeText(context, "Error on Sign In with Google", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d("Login Google error", "error: $e")
+            }
+        }
+
+    val googleSignInIntent = fun(): Intent {
+        val options = GoogleSignInOptions.Builder(
+            GoogleSignInOptions.DEFAULT_SIGN_IN
+        ).requestIdToken(Constants.GOOGLE_TOKEN)
+            .requestEmail()
+            .build()
+
+        val googleSignInClient = GoogleSignIn.getClient(context, options)
+        return googleSignInClient.signInIntent
+    }
+
 
     Column(
         modifier = Modifier.padding(32.dp),
@@ -37,16 +78,16 @@ fun LoginView(navController: NavController, loginViewModel: LoginViewModel) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = loginViewModel.email,
-            onValueChange = {loginViewModel.email = it},
-            placeholder = { Text(text = "Email")},
+            onValueChange = { loginViewModel.email = it },
+            placeholder = { Text(text = "Email") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = loginViewModel.password,
-            onValueChange = {loginViewModel.password = it},
-            placeholder = { Text(text = "Password")},
+            onValueChange = { loginViewModel.password = it },
+            placeholder = { Text(text = "Password") },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
@@ -54,8 +95,7 @@ fun LoginView(navController: NavController, loginViewModel: LoginViewModel) {
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                loginViewModel.login {
-                    success ->
+                loginViewModel.login { success ->
                     if (success) {
                         navController.navigate("HomeView") {
                             popUpTo("SplashView") { inclusive = true }
@@ -68,5 +108,14 @@ fun LoginView(navController: NavController, loginViewModel: LoginViewModel) {
         ) {
             Text(text = "Sign In")
         }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { launcher.launch(googleSignInIntent()) }
+        ) {
+            Text(text = "Sign In with Google")
+        }
     }
+
+
 }
